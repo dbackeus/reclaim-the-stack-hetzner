@@ -12,7 +12,7 @@ ingress:
   - hostname: grafana.rts-hetzner.mynewsdesk.dev
     service: http://monitoring-grafana.monitoring.svc
   # Applications:
-  # - hostname: <application>.rts-hetzner.mynewsdesk.dev
-  #   service: http://<application>-web
+  - hostname: rails-example.rts-hetzner.mynewsdesk.dev
+    service: http://rails-example-web
   # This rule matches any traffic which didn't match a previous rule and returns 404:
   - service: http_status:404

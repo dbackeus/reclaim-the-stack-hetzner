@@ -1,0 +1,15 @@
+image: docker.io/reclaimthestack/rails-example:latest
+deployments:
+  web:
+    replicas: 1
+    memory: 512Mi
+    cpu: 100m
+    env:
+      - name: WEB_CONCURRENCY
+        value: "2"
+    readinessProbePath: /up
+resources: {}
+envFrom:
+  - secretRef:
+      name: rails-example
+env: []
