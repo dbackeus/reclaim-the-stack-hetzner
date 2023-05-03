@@ -39,6 +39,11 @@ resources:
     memory: 100Mi
     cpu: 250m
     disk: 500Mi
+  elasticsearch:
+    replicas: 2
+    memory: 512Mi
+    cpu: 500m
+    disk: 10Gi
 envFrom:
   - secretRef:
       name: rails-example
@@ -48,4 +53,5 @@ env:
   # NOTE: Redis clients do not support SENTINEL_URL out of the box, you'll have to write your own
   # initialization logic. We recommend using it instead of REDIS_URL for 0 downtime failovers.
   - { name: SENTINEL_URL, value: "redis-sentinel://rfs-rails-example:26379/mymaster" }
-
+  - { name: ELASTICSEARCH_PASSWORD, valueFrom: { secretKeyRef: { name: rails-example-es-elastic-user, key: elastic } } }
+  - { name: ELASTICSEARCH_URL, value: "http://elastic:$(ELASTICSEARCH_PASSWORD)@rails-example-es-http:9200" }
