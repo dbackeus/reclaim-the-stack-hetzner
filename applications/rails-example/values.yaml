@@ -1,4 +1,4 @@
-image: docker.io/reclaimthestack/rails-example:latest
+image: docker.io/reclaimthestack/rails-example:sha-fa60adef747cc5b25876d0d4b3c0161af0a92d34
 deployments:
   web:
     replicas: 2
