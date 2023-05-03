@@ -41,7 +41,7 @@ resources:
     disk: 500Mi
   elasticsearch:
     replicas: 2
-    memory: 512Mi
+    memory: 1Gi
     cpu: 500m
     disk: 10Gi
 envFrom:
