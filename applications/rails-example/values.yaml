@@ -1,15 +1,51 @@
 image: docker.io/reclaimthestack/rails-example:latest
 deployments:
   web:
-    replicas: 1
+    replicas: 2
     memory: 512Mi
     cpu: 100m
     env:
       - name: WEB_CONCURRENCY
         value: "2"
     readinessProbePath: /up
-resources: {}
+  sidekiq:
+    replicas: 1
+    memory: 512Mi
+    cpu: 250m
+    env: []
+resources:
+  postgres:
+    replicas: 2
+    memory: 1Gi
+    cpu: 1
+    disk: 10Gi
+    # Tip: generate configuration based on CPU / RAM settings at https://pgtune.leopard.in.ua/
+    config:
+      max_connections: 40
+      shared_buffers: 256MB
+      effective_cache_size: 768MB
+      maintenance_work_mem: 64MB
+      checkpoint_completion_target: "0.9"
+      wal_buffers: 7864kB
+      default_statistics_target: "100"
+      random_page_cost: "1.1"
+      effective_io_concurrency: "200"
+      work_mem: 3276kB
+      min_wal_size: 1GB
+      max_wal_size: 4GB
+  redis:
+    sentinels: 3
+    replicas: 2
+    memory: 100Mi
+    cpu: 250m
+    disk: 500Mi
 envFrom:
   - secretRef:
       name: rails-example
-env: []
+env:
+  - { name: DATABASE_URL, valueFrom: { secretKeyRef: { name: rails-example-pguser-rails-example, key: uri } } }
+  - { name: REDIS_URL, value: "redis://rails-example-redis-master.default.svc:6379" }
+  # NOTE: Redis clients do not support SENTINEL_URL out of the box, you'll have to write your own
+  # initialization logic. We recommend using it instead of REDIS_URL for 0 downtime failovers.
+  - { name: SENTINEL_URL, value: "redis-sentinel://rfs-rails-example:26379/mymaster" }
+
